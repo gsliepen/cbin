@@ -90,7 +90,12 @@ int unescape(char *buf, size_t len) {
 			len -= 3;
 			newlen -= 2;
 		} else {
-			*o++ = *i++;
+			if(*i == '+') {
+				*o++ = ' ';
+				i++;
+			} else {
+				*o++ = *i++;
+			}
 			len--;
 		}
 	}
