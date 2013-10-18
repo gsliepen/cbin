@@ -110,7 +110,7 @@ int post(void) {
 		return header(400, "Bad Request");
 
 	char buf[65536];
-	if (fread(buf, len, 1, stdin) != 1 || !strcmp(buf, "text="))
+	if (fread(buf, len, 1, stdin) != 1 || strncmp(buf, "text=", 5) || memchr(buf + 5, '&', len - 5))
 		return header(400, "Bad Request");
 
 	len = unescape(buf + 5, len - 5);
