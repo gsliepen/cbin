@@ -118,7 +118,7 @@ int post(void) {
 	char *name;
 	FILE *f = newfile(&name);
 	if(!f)
-		return header(500, data);
+		return header(500, "Internal Server Error");
 
 	if(fwrite(buf + 5, len, 1, f) != 1 || fclose(f))
 		return header(500, "Internal Server Error");
@@ -162,15 +162,18 @@ int cgi_main(void) {
 	char path[PATH_MAX];
 	snprintf(path, sizeof path, "%s/%s", data, query);
 	FILE *f = fopen(path, "r");
-	if(!f)
+	if (!f)
 		return header(404, "Not Found");
 
+	char buf[65536];
+	size_t len = fread(buf, 1, sizeof buf, f);
+	if (!len)
+		return header(500, "Internal Server Error");
+
 	header(200, "OK");
-	printf("Content-Type: text/plain\n\n");
+	printf("Content-Type: text/plain\nContent-Length: %zu\n\n", len);
 	
-	char line[1024];
-	while (fgets(line, sizeof line, f))
-		fputs(line, stdout);
+	fwrite(buf, len, 1, stdout);
 
 	return 0;
 }
