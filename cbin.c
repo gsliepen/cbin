@@ -13,7 +13,6 @@
 #include <sys/types.h>
 #include <err.h>
 #include <fcntl.h>
-#include <getopt.h>
 #include <unistd.h>
 
 char *data;
@@ -218,14 +217,7 @@ int http_main(void) {
 int main(int argc, char *argv[]) {
 	int opt;
 
-	static const struct option longopts[] = {
-		{"cgi", false, 0, 'c'},
-		{"data", true, 0, 'd'},
-		{"http", false, 0, 'h'},
-		{},
-	};
-
-	while ((opt = getopt_long(argc, argv, "cd:h", longopts, NULL)) != EOF) {
+	while ((opt = getopt(argc, argv, "cd:h")) != -1) {
 		switch (opt) {
 		case 'c':
 			cgi = true;
