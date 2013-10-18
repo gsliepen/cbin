@@ -124,7 +124,15 @@ int post(void) {
 		return header(500, "Internal Server Error");
 
 	header(303, "See Other");
-	printf("Location: %s%s%s\n\n", getenv("REQUEST_URI") ?: "/", cgi ? "?" : "", name);
+	printf("Location: %s%s%s\n", getenv("REQUEST_URI") ?: "/", cgi ? "?" : "", name);
+	printf("Content-Type: text/plain\n\n");
+
+	if (getenv("HTTP_HOST")) {
+		printf("http://%s", getenv("HTTP_HOST"));
+		if (strcmp(getenv("SERVER_PORT") ?: "80", "80"))
+			printf(":%s", getenv("SERVER_PORT"));
+	}
+	printf("%s%s%s\n", getenv("REQUEST_URI") ?: "/", cgi ? "?" : "", name);
 
 	return 0;
 }
