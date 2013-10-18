@@ -15,13 +15,13 @@
 #include <fcntl.h>
 #include <unistd.h>
 
-char *data;
-bool cgi;
-bool http;
+static char *data;
+static bool cgi;
+static bool http;
 
 static const char base64[] = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-_";
 
-int header(int code, const char *text) {
+static int header(int code, const char *text) {
 	if(http)
 		printf("HTTP/1.0 %d %s\nConnection: close\n", code, text);
 	else
@@ -33,7 +33,7 @@ int header(int code, const char *text) {
 	return code != 200;
 }
 
-int form(void) {
+static int form(void) {
 	const char *uri = getenv("REQUEST_URI") ?: "/";
 	header(200, "OK");
 	printf("Content-Type: text/html\n\n");
@@ -41,7 +41,7 @@ int form(void) {
 	return 0;
 }
 
-FILE *newfile(char **rname) {
+static FILE *newfile(char **rname) {
 	if(!rname)
 		return NULL;
 
@@ -69,7 +69,7 @@ again:
 	return fdopen(fd, "w");
 }
 
-int dehex(char c) {
+static int dehex(char c) {
 	if (c < 'A')
 		return c - '0';
 	else if(c < 'a')
@@ -78,7 +78,7 @@ int dehex(char c) {
 		return c - 'a' + 10;
 }
 
-int unescape(char *buf, size_t len) {
+static int unescape(char *buf, size_t len) {
 	char *i = buf, *o = buf;
 	int newlen = len;
 
@@ -102,7 +102,7 @@ int unescape(char *buf, size_t len) {
 	return newlen;
 }
 
-int post(void) {
+static int post(void) {
 	size_t len = atoi(getenv("CONTENT_LENGTH") ?: "0");
 
 	if (len < 6 || len > 65536)
@@ -136,11 +136,11 @@ int post(void) {
 	return 0;
 }
 
-bool wellformed(const char *query) {
+static bool wellformed(const char *query) {
 	return strspn(query, base64) == 8 && !query[8];
 }
 
-int cgi_main(void) {
+static int cgi_main(void) {
 	char *method = getenv("REQUEST_METHOD");
 	if (!method)
 		errx(1, "REQUEST_METHOD missing");
@@ -177,7 +177,7 @@ int cgi_main(void) {
 	return 0;
 }
 
-int http_main(void) {
+static int http_main(void) {
 	char request[1024], line[1024], *p;
 	if (!fgets(request, sizeof request, stdin))
 		err(1, "error reading request");
