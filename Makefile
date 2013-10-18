@@ -1,15 +1,12 @@
-CFLAGS ?= -Os -flto -Wall
+CFLAGS ?= -Os -Wall
 LDFLAGS ?= -s
 
 all: cbin
 
-%.o: %.c
-	c99 $(CFLAGS) -c -o $@ $<
-
-cbin: cbin.o
+cbin: cbin.c
 	c99 $(CFLAGS) $(LDFLAGS) -o $@ $<
 	
 clean:
-	rm -f *.o cbin
+	rm -f cbin
 
 .PHONY: all clean
