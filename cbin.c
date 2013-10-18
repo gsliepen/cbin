@@ -38,7 +38,7 @@ int form(void) {
 	const char *uri = getenv("REQUEST_URI") ?: "/";
 	header(200, "OK");
 	printf("Content-Type: text/html\n\n");
-	printf("<form action=\"%s\" method=\"post\"><p><textarea name=\"text\" cols=\"80\" rows=\"25\" maxlength=\"65536\"></textarea></p><input type=\"submit\" value=\"Submit\"></form>\n", uri);
+	printf("<form action=\"%s\" method=\"post\"><p><textarea name=\"text\" cols=\"80\" rows=\"25\" maxlength=\"65536\" required autofocus></textarea></p><input type=\"submit\" value=\"Submit\"></form>\n", uri);
 	return 0;
 }
 
