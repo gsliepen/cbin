@@ -173,7 +173,7 @@ static int cgi_main(void) {
 			return header(405, "Method Not Allowed");
 	}
 
-	if (!wellformed(query))
+	if (!wellformed(query) || strcmp(method, "GET"))
 		return header(400, "Bad Request");
 
 	char path[PATH_MAX];
