@@ -1,0 +1,84 @@
+.Dd 2013-10-21
+.Dt CBIN 1
+.\" Manual page created by:
+.\" Guus Sliepen <guus@debian.org>
+.Sh NAME
+.Nm cbin
+.Nd Minimalist pastebin
+.Sh SYNOPSIS
+.Nm
+.Op Fl c | Fl h
+.Op Fl d Ar DIR
+.Sh DESCRIPTION
+.Nm
+is a minimalist pastebin.
+It is written in C and only depends on the standard C library.
+It can work as a CGI app, or as a HTTP daemon when started from inetd.
+When browsing to the cbin app, a form will be returned with a text area and a submit button.
+Users can type any text in the text area, up to 64 kilobytes in length.
+When the submit button is clicked, the text is stored, and a URL will be returned with a 8 character random string
+that will in turn display the stored text.
+The URL itself is not stored anywhere, so every paste is a private one.
+.Sh OPTIONS
+.Bl -tag -width indent
+.It Fl c
+Force CGI mode. Normally,
+.Nm
+will autodetect that it is run as a CGI app by the presence of the environment variable
+.Ev GATEWAY_INTERFACE .
+.It Fl h
+Force HTTP mode.
+.It Fl d Ar DIR
+Read pastes from and store pastes in the directory
+.Ar DIR .
+.El
+.Sh ENVIRONMENT VARIABLES
+.Bl -tag -width indent
+.It Ev CBIN_DATA
+The directory to store pastes in.
+.El
+.Sh EXAMPLES
+Use
+.Nm socket
+to run
+.Nm
+as a HTTP daemon on port 6362:
+.Bd -literal -offset indent
+socket -flqs 6362 -p "/path/to/cbin -d /path/to/pastes"
+.Ed
+.Pp
+Add the following line to
+.Pa /etc/inetd.conf
+to let
+.Nm
+run as a HTTP daemon on port 6362:
+.Bd -literal -offset indent
+6362 stream tcp nowait nobody /path/to/cbin cbin -d /path/to/pastes
+.Ed
+.Pp
+On Debian systems, after installing a web server such as
+.Nm lighttpd ,
+copy or symlink
+.Nm
+to
+.Pa /var/www/cgi-bin/
+and enable CGI support in the web server.
+Then, you can browse to http://localhost/cgi-bin/cbin to access the pastebin.
+.Pp
+Use
+.Nm curl
+to paste text from stdin:
+.Bd -literal -offset indent
+curl --data-urlencode text@- http://localhost/cgi-bin/cbin
+.Ed
+.Pp
+Add the following script to
+.Pa /etc/cron.daily/
+to automatically remove pastes older than a week:
+.Bd -literal -offset indent
+#!/bin/sh
+find /path/to/pastes -mtime +7 -delete
+.Ed
+.Sh AUTHOR
+.An "Guus Sliepen" Aq guus@debian.org
+.Pp
