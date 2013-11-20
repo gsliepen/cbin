@@ -64,7 +64,7 @@ static int header(int code, const char *text) {
 static int form(void) {
 	header(200, "OK");
 	printf("Content-Type: text/html\n\n");
-	printf("<form action=\"%s\" method=\"post\"><p><textarea name=\"text\" cols=\"80\" rows=\"25\" maxlength=\"65536\" required autofocus></textarea></p><input type=\"submit\" value=\"Submit\"></form>\n", request_uri);
+	printf("<form action=\"%s\" method=\"post\"><p><textarea name=\"text\" cols=\"80\" rows=\"25\" maxlength=\"65536\" required autofocus></textarea></p><input type=\"submit\" value=\"Submit\"></form>\n", request_uri ?: "");
 	return 0;
 }
 
@@ -205,7 +205,7 @@ static int cgi_main(void) {
 	request_method = getenv("REQUEST_METHOD");
 	request_uri = getenv("REQUEST_URI");
 	query_string = getenv("QUERY_STRING");
-	content_length = atoi(getenv("CONTENT_LENGTH"));
+	content_length = atoi(getenv("CONTENT_LENGTH") ?: "0");
 	http_host = getenv("HTTP_HOST");
 	server_port = getenv("SERVER_PORT");
 
