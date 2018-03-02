@@ -56,14 +56,14 @@ static int header(int code, const char *text) {
 		printf("Status: %d %s\n", code, text);
 
 	if(code != 200 && code != 303)
-		printf("Content-Type: text/html\n\n<title>%d %s</title>\n<h1>%d %s</h1>\n", code, text, code, text);
+		printf("Content-Type: text/html; charset=utf-8\n\n<title>%d %s</title>\n<h1>%d %s</h1>\n", code, text, code, text);
 	
 	return code != 200;
 }
 
 static int form(void) {
 	header(200, "OK");
-	printf("Content-Type: text/html\n\n");
+	printf("Content-Type: text/html; charset=utf-8\n\n");
 	printf("<form action=\"%s\" method=\"post\"><p><textarea name=\"text\" cols=\"80\" rows=\"25\" maxlength=\"65536\" required autofocus></textarea></p><input type=\"submit\" value=\"Submit\"></form>\n", request_uri ?: "");
 	return 0;
 }
@@ -150,7 +150,7 @@ static int post(void) {
 
 	header(303, "See Other");
 	printf("Location: %s%s%s\n", request_uri ?: "/", cgi ? "?" : "", name);
-	printf("Content-Type: text/plain\n\n");
+	printf("Content-Type: text/plain; charset=utf-8\n\n");
 
 	if (http_host) {
 		printf("http://%s", http_host);
@@ -194,7 +194,7 @@ static int common_main(void) {
 		return header(500, "Internal Server Error");
 
 	header(200, "OK");
-	printf("Content-Type: text/plain\nContent-Length: %lu\n\n", (unsigned long)len);
+	printf("Content-Type: text/plain; charset=utf-8\nContent-Length: %lu\n\n", (unsigned long)len);
 	
 	fwrite(buf, len, 1, stdout);
 
